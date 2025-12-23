@@ -1,6 +1,18 @@
 # Reachy Mini Apps
 
-A monorepo for Reachy Mini robot applications using [uv](https://docs.astral.sh/uv/) workspace.
+A monorepo for [Reachy Mini](https://github.com/pollen-robotics/reachy_mini) robot applications using [uv](https://docs.astral.sh/uv/) workspace.
+
+## About Reachy Mini
+
+[Reachy Mini](https://github.com/pollen-robotics/reachy_mini) is an open-source expressive robot by [Pollen Robotics](https://www.pollen-robotics.com/), designed for hackers and AI builders. It features a movable head, antennas, and body rotation—all controllable through a simple Python SDK.
+
+**Key features:**
+- Easy Python SDK for head, body, and antenna control
+- Camera and audio for interactive applications
+- LLM integration via Hugging Face ecosystem
+- Available as wireless (battery-powered) or lite (USB) versions
+
+This repo contains quickstart examples and applications to help you get building.
 
 ## Prerequisites
 
