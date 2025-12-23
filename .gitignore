@@ -36,3 +36,6 @@ captured_frame.*
 # Environment variables
 .env
 .env.local
+
+# Work in progress - not ready for public
+camera-live-feed/
