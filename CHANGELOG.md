@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.0] - 2025-12-23
+
+### Added
+
+#### Camera Live Feed App
+- Complete ReachyMiniApp implementation following official guide
+- Entry point registration for robot dashboard discovery
+- Static web UI with MJPEG streaming
+- HuggingFace Spaces landing page (index.html, style.css)
+- README with YAML frontmatter for HF publishing
+
+#### Documentation
+- DEPLOYMENT.md - Comprehensive deployment guide including:
+  - SSH credentials and connection instructions
+  - HuggingFace Spaces publishing workflow
+  - Direct SSH installation from GitHub
+  - Robot filesystem structure (/venvs/apps_venv/)
+  - Troubleshooting commands and common fixes
+  - Python symlink repair instructions
+
+### Fixed
+- Entry point name: `camera-live-feed` (hyphens, not underscores)
+- Python version constraint: `>=3.10` (robot runs 3.13.5)
+- HuggingFace colorTo value: `indigo` (cyan not valid)
+
 ## [0.1.0] - 2025-12-22
 
 ### Added
