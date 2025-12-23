@@ -85,14 +85,17 @@ For development and testing without publishing to HuggingFace.
 
 ```
 /venvs/
-├── apps_venv/          # Where apps are installed
+├── apps_venv/          # Where apps are installed (MUST use Python 3.12)
 │   ├── bin/
-│   │   ├── python -> /usr/bin/python3
-│   │   └── pip
-│   └── lib/
-├── mini_daemon/        # Daemon's venv
+│   │   └── python -> uv's Python 3.12
+│   ├── lib/
+│   │   └── python3.12/site-packages/  # Apps go here
+│   └── pyvenv.cfg      # CRITICAL: Must point to uv Python 3.12
+├── mini_daemon/        # Daemon's venv (Python 3.12)
 └── src/                # Source code
 ```
+
+> **CRITICAL**: The daemon runs Python 3.12 and only looks for apps in `python3.12/site-packages/`. If apps_venv uses Python 3.13, your apps will install to the wrong location and the daemon won't find them!
 
 #### Installation Steps
 
@@ -102,31 +105,47 @@ For development and testing without publishing to HuggingFace.
    # Password: root
    ```
 
-2. **Fix Python symlinks if broken:**
+2. **Verify Python version matches daemon:**
    ```bash
-   cd /venvs/apps_venv/bin/
-   rm -f python python3 python3.12 python3.13
-   ln -s /usr/bin/python3 python
-   ln -s /usr/bin/python3 python3
-   ln -s /usr/bin/python3 python3.13
+   /venvs/apps_venv/bin/python --version   # Must be 3.12.x
+   /venvs/mini_daemon/bin/python --version  # Reference: 3.12.12
    ```
 
-3. **Reinstall pip if needed:**
+3. **If Python versions don't match, fix apps_venv:**
    ```bash
-   ./python -m ensurepip --upgrade
+   # Fix symlinks to use uv's Python 3.12 (same as daemon)
+   cd /venvs/apps_venv/bin/
+   rm -f python python3 python3.12 python3.13
+   ln -s /home/pollen/.local/share/uv/python/cpython-3.12.12-linux-aarch64-gnu/bin/python3.12 python
+   ln -s python python3
+   ln -s python python3.12
+
+   # Fix pyvenv.cfg (CRITICAL for standalone uv Python)
+   echo 'home = /home/pollen/.local/share/uv/python/cpython-3.12.12-linux-aarch64-gnu/bin' > /venvs/apps_venv/pyvenv.cfg
+   echo 'implementation = CPython' >> /venvs/apps_venv/pyvenv.cfg
+   echo 'version_info = 3.12.12' >> /venvs/apps_venv/pyvenv.cfg
+   echo 'include-system-site-packages = false' >> /venvs/apps_venv/pyvenv.cfg
+
+   # Verify
+   /venvs/apps_venv/bin/python --version  # Should show 3.12.12
    ```
 
 4. **Install app from GitHub:**
    ```bash
-   ./python -m pip install "git+https://github.com/doneyli/reachy-mini-apps.git#subdirectory=camera-live-feed"
+   /venvs/apps_venv/bin/python -m pip install "git+https://github.com/doneyli/reachy-mini-apps.git#subdirectory=camera-live-feed"
    ```
 
 5. **Verify installation:**
    ```bash
-   ./python -c "from importlib.metadata import entry_points; eps = entry_points(group='reachy_mini_apps'); print([ep.name for ep in eps])"
+   /venvs/apps_venv/bin/python -c "from importlib.metadata import entry_points; eps = entry_points(group='reachy_mini_apps'); print([ep.name for ep in eps])"
    ```
 
-6. **Refresh dashboard:**
+6. **Restart daemon:**
+   ```bash
+   sudo systemctl restart reachy-mini-daemon
+   ```
+
+7. **Refresh dashboard:**
    - Go to http://reachy-mini:8000/
    - App should appear in Applications section
 
@@ -184,9 +203,19 @@ for ep in eps:
 "
 ```
 
-### Python Version
+### Python Version Mismatch
 
-The robot runs **Python 3.13.5**. Ensure your `pyproject.toml` allows it:
+**This is the #1 cause of "app won't start" issues!**
+
+The robot has two Python versions:
+- **System Python**: 3.13.5 (`/usr/bin/python3`)
+- **Daemon Python**: 3.12.12 (uv standalone at `/home/pollen/.local/share/uv/python/`)
+
+The daemon uses Python 3.12 and only finds apps in `python3.12/site-packages/`.
+
+See [TROUBLESHOOTING.md](TROUBLESHOOTING.md) for the full diagnosis and fix.
+
+Your `pyproject.toml` should allow both versions:
 ```toml
 requires-python = ">=3.10"
 ```
@@ -198,6 +227,7 @@ requires-python = ">=3.10"
 
 ## Resources
 
+- [TROUBLESHOOTING.md](TROUBLESHOOTING.md) - Detailed debugging guide for common issues
 - [Make and Publish Reachy Mini Apps](https://huggingface.co/blog/pollen-robotics/make-and-publish-your-reachy-mini-apps)
 - [Reachy Mini SDK](https://github.com/pollen-robotics/reachy_mini)
 - [SDK Installation Guide](https://github.com/pollen-robotics/reachy_mini/blob/develop/docs/SDK/installation.md)
