@@ -16,9 +16,9 @@ class CameraLiveFeed(ReachyMiniApp):
     When running, access the live feed at the custom_app_url (default: http://reachy-mini:8042)
     """
 
-    # Full URL - the base class starts a uvicorn server on this port
-    # and automatically serves static/ files and index.html
-    custom_app_url: str | None = "http://0.0.0.0:8042"
+    # URL for the settings UI - this is what browsers will use to connect
+    # The base class extracts host:port for uvicorn binding
+    custom_app_url: str | None = "http://reachy-mini:8042"
     request_media_backend = "default"
 
     def __init__(self, running_on_wireless: bool = False) -> None:
