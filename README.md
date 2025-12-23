@@ -83,10 +83,15 @@ source .venv/bin/activate  # macOS/Linux
 reachy-mini-apps/
 ├── pyproject.toml          # Root workspace configuration
 ├── quickstarts/            # Simple example scripts
-│   └── wiggle_antennas.py  # Antenna wiggle demo
+│   ├── wiggle_antennas.py
+│   ├── head_movement.py
+│   ├── body_rotation.py
+│   ├── camera_capture.py
+│   ├── camera_dashboard.py
+│   └── combined_movement.py
 ├── packages/
-│   └── shared/             # Shared library (robot connection, ClickHouse client)
-└── camera-live-feed/       # Live camera streaming app
+│   └── shared/             # Shared library
+└── camera-live-feed/       # Dashboard app for live camera streaming
 ```
 
 ## Connecting to Reachy Mini
@@ -118,13 +123,14 @@ uv run python quickstarts/wiggle_antennas.py
 
 ### Camera Live Feed
 
-Stream live video from the robot's camera:
+A dashboard app for live video streaming. Install and run via the robot dashboard:
 
-```bash
-uv run camera-live-feed/main.py
-```
+1. Start the daemon: `reachy-mini-daemon`
+2. Open http://localhost:8000/ (or http://reachy-mini:8000/)
+3. Find "Camera Live Feed" in Applications
+4. Click **Run**, then the **gear icon** to view the feed
 
-Press `q` to quit the video stream.
+See [camera-live-feed/README.md](camera-live-feed/README.md) for details.
 
 ## Development
 

@@ -1,5 +1,5 @@
-"""Camera Live Feed App for Reachy Mini."""
+"""Camera Live Feed - Live camera streaming app for Reachy Mini."""
 
-from camera_live_feed.main import CameraLiveFeedApp
+from .main import CameraLiveFeed
 
-__all__ = ["CameraLiveFeedApp"]
+__all__ = ["CameraLiveFeed"]

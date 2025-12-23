@@ -171,17 +171,11 @@ name = "camera-live-feed"
 version = "0.1.0"
 source = { editable = "camera-live-feed" }
 dependencies = [
-    { name = "fastapi" },
-    { name = "opencv-python" },
     { name = "reachy-mini" },
 ]
 
 [package.metadata]
-requires-dist = [
-    { name = "fastapi", specifier = ">=0.100.0" },
-    { name = "opencv-python", specifier = ">=4.8.0" },
-    { name = "reachy-mini", specifier = ">=1.2.0" },
-]
+requires-dist = [{ name = "reachy-mini", specifier = ">=1.2.4" }]
 
 [[package]]
 name = "certifi"

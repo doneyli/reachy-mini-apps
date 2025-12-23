@@ -1,46 +1,80 @@
 # Camera Live Feed
 
-A Reachy Mini App that streams live video from the robot's camera to your web browser.
+A Reachy Mini app that streams live video from the robot's camera to a web dashboard.
+
+Built following the official [Make and Publish Reachy Mini Apps](https://huggingface.co/blog/pollen-robotics/make-and-publish-your-reachy-mini-apps) guide.
 
 ## Features
 
-- Live MJPEG video stream viewable in any browser
-- Single-frame snapshot endpoint
-- Optimized for low-latency streaming
+- Live MJPEG video streaming at 15 FPS
+- Snapshot capture with download
+- Auto-reconnect on connection loss
+- Responsive dashboard UI
 
 ## Installation
 
-Install from the Reachy Mini dashboard's App Store, or manually:
-
 ```bash
-pip install camera-live-feed
+# From the monorepo root
+uv sync
+
+# Or install standalone
+pip install -e camera-live-feed/
 ```
 
 ## Usage
 
-Once installed and started from the dashboard, open your browser to:
+### Via Robot Dashboard
+
+1. Start the Reachy Mini daemon:
+   ```bash
+   reachy-mini-daemon
+   ```
+
+2. Open the dashboard at http://localhost:8000/ (or http://reachy-mini:8000/)
+
+3. Find "Camera Live Feed" in the Applications section
+
+4. Click **Run** to start the app
+
+5. Click the **gear icon** to open the live feed UI
+
+### API Endpoints
+
+When the app is running, these endpoints are available:
+
+| Endpoint | Description |
+|----------|-------------|
+| `/` | Dashboard UI |
+| `/api/stream` | MJPEG video stream |
+| `/api/snapshot` | Single JPEG frame |
+| `/api/status` | Camera status JSON |
+
+## Project Structure
 
 ```
-http://reachy-mini.local:8000/camera
+camera-live-feed/
+├── pyproject.toml
+├── README.md
+└── camera_live_feed/
+    ├── __init__.py
+    ├── main.py              # ReachyMiniApp implementation
+    └── static/
+        ├── index.html       # Dashboard UI
+        ├── style.css        # Styling
+        └── main.js          # Client-side logic
 ```
-
-### Endpoints
-
-- `/camera` - Web UI with live video player
-- `/camera/stream` - Raw MJPEG stream
-- `/camera/snapshot` - Single JPEG frame
 
 ## Development
 
-```bash
-# Clone and install in development mode
-cd camera-live-feed
-pip install -e .
+The app follows the standard Reachy Mini app structure:
 
-# Run with the daemon
-reachy-mini-daemon
-```
+- Inherits from `ReachyMiniApp`
+- Implements `run(reachy_mini, stop_event)` method
+- Uses `custom_app_url` for the settings UI
+- Registers custom FastAPI routes for streaming
 
-## License
+## Resources
 
-MIT
+- [Reachy Mini SDK](https://github.com/pollen-robotics/reachy_mini)
+- [App Development Guide](https://huggingface.co/blog/pollen-robotics/make-and-publish-your-reachy-mini-apps)
+- [SDK Python Reference](https://github.com/pollen-robotics/reachy_mini/blob/develop/docs/SDK/python-sdk.md)

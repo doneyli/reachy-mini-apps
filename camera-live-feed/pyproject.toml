@@ -1,21 +1,22 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "camera-live-feed"
 version = "0.1.0"
-description = "Live camera feed from Reachy Mini robot - stream to web browser"
-requires-python = ">=3.10"
+description = "Live camera feed dashboard for Reachy Mini"
 readme = "README.md"
+requires-python = ">=3.10,<3.13"
 dependencies = [
-    "reachy-mini>=1.2.0",
-    "opencv-python>=4.8.0",
-    "fastapi>=0.100.0",
+    "reachy-mini>=1.2.4",
 ]
 
-[project.entry-points."reachy_mini.apps"]
-camera_live_feed = "camera_live_feed:CameraLiveFeedApp"
+[project.entry-points."reachy_mini_apps"]
+camera_live_feed = "camera_live_feed.main:CameraLiveFeed"
 
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+[tool.setuptools.packages.find]
+where = ["."]
 
-[tool.hatch.build.targets.wheel]
-packages = ["camera_live_feed"]
+[tool.setuptools.package-data]
+camera_live_feed = ["static/*"]
