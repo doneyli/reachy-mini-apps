@@ -1,3 +1,16 @@
+---
+title: Camera Live Feed
+emoji: 📷
+colorFrom: blue
+colorTo: indigo
+sdk: static
+pinned: false
+short_description: Live camera streaming dashboard for Reachy Mini
+tags:
+  - reachy_mini
+  - reachy_mini_python_app
+---
+
 # Camera Live Feed
 
 A Reachy Mini app that streams live video from the robot's camera to a web dashboard.

@@ -13,7 +13,7 @@ dependencies = [
 ]
 
 [project.entry-points."reachy_mini_apps"]
-camera_live_feed = "camera_live_feed.main:CameraLiveFeed"
+camera-live-feed = "camera_live_feed.main:CameraLiveFeed"
 
 [tool.setuptools.packages.find]
 where = ["."]
