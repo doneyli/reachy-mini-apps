@@ -81,54 +81,63 @@ camera-live-feed/
         └── main.js
 ```
 
-## Current main.py Configuration
+## Current main.py Configuration (Updated 2025-12-23)
 
 ```python
 class CameraLiveFeed(ReachyMiniApp):
-    custom_app_url = "http://0.0.0.0:8080"
+    # Port 8042 matches the official template pattern
+    custom_app_url: str | None = "http://0.0.0.0:8042"
     request_media_backend = "default"
 
     def __init__(self, running_on_wireless: bool = False) -> None:
         super().__init__(running_on_wireless=running_on_wireless)
-        # ... frame capture setup ...
+        # Frame capture setup only
+
+    def run(self, reachy_mini: ReachyMini, stop_event: threading.Event) -> None:
+        # Routes set up inside run() following official template pattern
         if self.settings_app is not None:
             self._setup_routes()  # Adds /api/stream, /api/snapshot, /api/status
+        # ... main loop ...
 ```
 
-## Next Steps to Investigate
+## Next Steps - Testing v0.2.1 Changes
 
-### 1. Check if uvicorn server starts
+### Changes Made
+1. Changed port from 8080 to **8042** (matches official template)
+2. Moved route setup from `__init__()` to `run()` (matches official template pattern)
+3. Added type annotation for `custom_app_url`
+
+### Deployment Commands
 ```bash
-# While app is toggled ON, check if port 8080 is listening
-ss -tlnp | grep 8080
-# or
-netstat -tlnp | grep 8080
+# SSH into robot
+ssh pollen@reachy-mini  # Password: root
+
+# Reinstall app from GitHub
+/venvs/apps_venv/bin/python -m pip install --upgrade \
+    "git+https://github.com/doneyli/reachy-mini-apps.git#subdirectory=camera-live-feed"
+
+# Restart daemon
+sudo systemctl restart reachy-mini-daemon
 ```
 
-### 2. Check daemon logs for uvicorn startup
+### Testing Checklist
 ```bash
+# 1. Check if port 8042 is listening (while app is toggled ON)
+ss -tlnp | grep 8042
+
+# 2. Test direct URL access
+curl -I http://localhost:8042/
+
+# 3. Check daemon logs
 journalctl -u reachy-mini-daemon -f
-# Toggle app ON and look for uvicorn/server startup messages
+# Look for: "Settings UI available at http://0.0.0.0:8042"
+
+# 4. Dashboard test
+# - Go to http://reachy-mini:8000/
+# - Toggle camera-live-feed ON
+# - Gear icon should appear
+# - Click gear icon to open http://reachy-mini:8042/
 ```
-
-### 3. Check if another app with gear icon exists
-Look at HuggingFace for Reachy Mini apps that have working settings UIs:
-- https://huggingface.co/spaces?search=reachy_mini
-
-### 4. Check daemon source code
-The daemon decides whether to show the gear icon. Look at:
-```bash
-cat /venvs/mini_daemon/lib/python3.12/site-packages/reachy_mini/daemon/app/routers/apps.py
-```
-
-### 5. Try a different port
-Port 8080 might conflict. Try:
-```python
-custom_app_url = "http://0.0.0.0:8888"
-```
-
-### 6. Check if app needs to be running for gear icon
-Some dashboards only show the gear icon when the app is actively running.
 
 ## Robot SSH Access
 

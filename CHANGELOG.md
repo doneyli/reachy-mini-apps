@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.1] - 2025-12-23
+
+### Fixed
+
+#### Camera Live Feed App
+- Changed port from 8080 to 8042 to match official template pattern
+- Moved route setup to `run()` method (following official template)
+- Added type annotation for `custom_app_url` class attribute
+
+### Added
+- Architecture diagram in README showing daemon/app relationship
+- Processing load documentation for MJPEG streaming
+
 ## [0.2.0] - 2025-12-23
 
 ### Added

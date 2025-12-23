@@ -13,12 +13,12 @@ class CameraLiveFeed(ReachyMiniApp):
     """
     Reachy Mini App that streams live camera feed to the robot's dashboard.
 
-    When running, access the live feed at the custom_app_url (default: http://reachy-mini:8080)
+    When running, access the live feed at the custom_app_url (default: http://reachy-mini:8042)
     """
 
     # Full URL - the base class starts a uvicorn server on this port
     # and automatically serves static/ files and index.html
-    custom_app_url = "http://0.0.0.0:8080"
+    custom_app_url: str | None = "http://0.0.0.0:8042"
     request_media_backend = "default"
 
     def __init__(self, running_on_wireless: bool = False) -> None:
@@ -29,10 +29,6 @@ class CameraLiveFeed(ReachyMiniApp):
         self._frame_lock = threading.Lock()
         self._fps = 15
         self._jpeg_quality = 80
-
-        # Register custom API routes (static files handled by base class)
-        if self.settings_app is not None:
-            self._setup_routes()
 
     def _setup_routes(self) -> None:
         """Set up FastAPI routes for camera streaming."""
@@ -73,6 +69,11 @@ class CameraLiveFeed(ReachyMiniApp):
             reachy_mini: The connected Reachy Mini instance.
             stop_event: Event to signal graceful shutdown.
         """
+        # Set up API routes (following template pattern - routes added inside run())
+        if self.settings_app is not None:
+            self._setup_routes()
+            self.logger.info(f"Settings UI available at {self.custom_app_url}")
+
         self.logger.info("Starting camera capture...")
         frame_interval = 1.0 / self._fps
 

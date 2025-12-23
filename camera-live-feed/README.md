@@ -24,6 +24,55 @@ Built following the official [Make and Publish Reachy Mini Apps](https://hugging
 - Auto-reconnect on connection loss
 - Responsive dashboard UI
 
+## Architecture
+
+```
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                           Reachy Mini Robot                                  │
+│                                                                              │
+│  ┌─────────────────────────────────┐    ┌──────────────────────────────┐    │
+│  │  Reachy Mini Daemon (port 8000) │    │  Camera Live Feed (port 8042)│    │
+│  │  ─────────────────────────────  │    │  ────────────────────────────│    │
+│  │  • Main dashboard UI            │    │  • MJPEG video stream        │    │
+│  │  • App management               │    │  • Snapshot API              │    │
+│  │  • Shows gear icon when app     │───▶│  • Status endpoint           │    │
+│  │    is running                   │    │  • Static UI files           │    │
+│  └─────────────────────────────────┘    └──────────────────────────────┘    │
+│           ▲                                         ▲                        │
+└───────────│─────────────────────────────────────────│────────────────────────┘
+            │                                         │
+            │ http://reachy-mini:8000/                │ http://reachy-mini:8042/
+            │                                         │
+┌───────────│─────────────────────────────────────────│────────────────────────┐
+│           │               Your Computer             │                        │
+│           ▼                                         ▼                        │
+│  ┌─────────────────────────────────┐    ┌──────────────────────────────┐    │
+│  │  Browser Tab 1                  │    │  Browser Tab 2               │    │
+│  │  ─────────────────────────────  │    │  ────────────────────────────│    │
+│  │  Dashboard - toggle app on/off  │    │  Live camera feed viewer     │    │
+│  │  Click ⚙️ gear icon to open ────────▶│  (opened via gear icon)      │    │
+│  │  settings UI                    │    │                              │    │
+│  └─────────────────────────────────┘    └──────────────────────────────┘    │
+│                                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+```
+
+### How It Works
+
+1. **Daemon (port 8000)**: The main Reachy Mini service that manages all apps
+2. **Camera App (port 8042)**: Runs its own web server when activated
+3. **Gear Icon**: Appears in dashboard only when the app is running
+4. **MJPEG Streaming**: Low-overhead streaming that works in any browser
+
+### Processing Load
+
+The MJPEG streaming is handled entirely on the robot's Raspberry Pi:
+- Frame capture from camera: ~5% CPU
+- JPEG encoding at 15 FPS: ~10-15% CPU
+- HTTP serving: negligible
+
+This is well within the Pi's capabilities for local network streaming.
+
 ## Installation
 
 ```bash
@@ -53,7 +102,7 @@ pip install -e camera-live-feed/
 
 ### API Endpoints
 
-When the app is running, these endpoints are available:
+When the app is running, these endpoints are available at `http://reachy-mini:8042`:
 
 | Endpoint | Description |
 |----------|-------------|
