@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Retry connection after 2 seconds
         setTimeout(() => {
-            videoFeed.src = '/api/stream?' + Date.now();
+            videoFeed.src = 'api/stream?' + Date.now();
             statusText.textContent = 'Reconnecting...';
         }, 2000);
     };
@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Snapshot functionality
     snapshotBtn.addEventListener('click', async () => {
         try {
-            const response = await fetch('/api/snapshot');
+            const response = await fetch('api/snapshot');
             if (!response.ok) throw new Error('Failed to capture');
 
             const blob = await response.blob();
@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Check status periodically
     async function checkStatus() {
         try {
-            const response = await fetch('/api/status');
+            const response = await fetch('api/status');
             if (response.ok) {
                 const data = await response.json();
                 if (data.streaming) {

@@ -2,9 +2,11 @@
 
 import threading
 import time
+from pathlib import Path
 import cv2
 from fastapi import Response
-from fastapi.responses import StreamingResponse
+from fastapi.responses import FileResponse, StreamingResponse
+from fastapi.staticfiles import StaticFiles
 from reachy_mini import ReachyMini
 from reachy_mini.apps.app import ReachyMiniApp
 
@@ -17,7 +19,6 @@ class CameraLiveFeed(ReachyMiniApp):
     or directly at the stream endpoint.
     """
 
-    custom_app_url = "http://localhost:5173"
     request_media_backend = "default"
 
     def __init__(self, running_on_wireless: bool = False) -> None:
@@ -29,9 +30,26 @@ class CameraLiveFeed(ReachyMiniApp):
         self._fps = 15
         self._jpeg_quality = 80
 
-        # Register custom API routes
+        # Register custom API routes and static files
         if self.settings_app is not None:
             self._setup_routes()
+            self._setup_static_files()
+
+    def _setup_static_files(self) -> None:
+        """Mount static files for the web UI."""
+        static_dir = Path(__file__).parent / "static"
+        if static_dir.exists():
+            # Serve index.html at root
+            @self.settings_app.get("/")
+            async def serve_index():
+                return FileResponse(static_dir / "index.html")
+
+            # Mount static files for CSS/JS
+            self.settings_app.mount(
+                "/static",
+                StaticFiles(directory=static_dir),
+                name="static"
+            )
 
     def _setup_routes(self) -> None:
         """Set up FastAPI routes for camera streaming."""
