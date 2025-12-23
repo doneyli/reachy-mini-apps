@@ -1,0 +1,16 @@
+[project]
+name = "reachy-mini-apps"
+version = "0.1.0"
+description = "Monorepo for Reachy Mini robot applications"
+readme = "README.md"
+requires-python = ">=3.10,<3.13"
+dependencies = [
+    "gst-signalling>=1.1.2",
+    "reachy-mini>=1.2.4",
+]
+
+[tool.uv.workspace]
+members = ["packages/*", "camera-live-feed"]
+
+[tool.uv.sources]
+shared = { workspace = true }
