@@ -19,6 +19,8 @@ class CameraLiveFeed(ReachyMiniApp):
     or directly at the stream endpoint.
     """
 
+    # This tells the dashboard to show the gear icon and where to open
+    custom_app_url = "/apps/camera-live-feed/"
     request_media_backend = "default"
 
     def __init__(self, running_on_wireless: bool = False) -> None:
