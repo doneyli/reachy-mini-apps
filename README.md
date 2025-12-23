@@ -157,4 +157,4 @@ The `packages/shared` library provides:
 
 ## License
 
-MIT
+Apache 2.0 - See [LICENSE](LICENSE) for details.
