@@ -19,8 +19,15 @@ All notable changes to this project will be documented in this file.
   - HuggingFace Spaces publishing workflow
   - Direct SSH installation from GitHub
   - Robot filesystem structure (/venvs/apps_venv/)
-  - Troubleshooting commands and common fixes
-  - Python symlink repair instructions
+  - Python version verification steps
+  - Daemon restart instructions
+
+- TROUBLESHOOTING.md - Deep-dive debugging guide covering:
+  - Python version mismatch problem (daemon uses 3.12, system has 3.13)
+  - The critical pyvenv.cfg configuration for uv standalone Python
+  - Entry point discovery issues and fixes
+  - HuggingFace Spaces publishing gotchas (colorTo values, frontmatter)
+  - Complete diagnosis and repair commands
 
 ### Fixed
 - Entry point name: `camera-live-feed` (hyphens, not underscores)
