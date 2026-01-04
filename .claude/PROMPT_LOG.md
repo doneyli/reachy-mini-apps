@@ -62,6 +62,13 @@ Each entry should include:
 ## Meta/Process
 *Workflow improvements, tooling setup, development process changes*
 
+### 2026-01-03 14:30
+**Prompt**: "I want to document in the README that the credentials for ssh to the Reachy-mini are: username: pollen pass: root"
+
+**Outcome**: Added "SSH Access to Reachy Mini" section to README.md with default credentials and connection command. Positioned after SDK connection information for logical grouping of device access details.
+
+**Category**: Meta/Process
+
 ---
 
 ## Notes

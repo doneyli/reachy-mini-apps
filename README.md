@@ -112,6 +112,19 @@ with ReachyMini(localhost_only=False) as mini:
     # Your code here
 ```
 
+## SSH Access to Reachy Mini
+
+To access the Reachy Mini robot directly via SSH:
+
+**Default credentials:**
+- **Username:** `pollen`
+- **Password:** `root`
+
+**Connect via SSH:**
+```bash
+ssh pollen@reachy-mini
+```
+
 ## Running Apps
 
 ### Wiggle Antennas
