@@ -1,0 +1,57 @@
+name: PR Review & Fix
+
+on:
+  pull_request:
+    types: [opened, ready_for_review]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: read
+  id-token: write
+  actions: read # Required for Claude to read CI results on PRs
+
+concurrency:
+  group: pr-review-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  review_and_fix:
+    if: |
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      !github.event.pull_request.draft &&
+      !contains(github.event.pull_request.title, '[skip-review]') &&
+      github.actor != 'claude[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0 # full history — review agents use git blame
+
+      - name: Review and fix
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          plugins: "code-review@claude-plugins-official"
+          additional_permissions: |
+            actions: read
+          prompt: |
+            You are the automated review-and-fix gate for PR #${{ github.event.pull_request.number }}.
+
+            1. Run the code-review plugin's review process on this PR's diff vs the base branch.
+            2. For each confirmed, high-confidence issue: fix it directly on this branch.
+               Conventional commits: fix(review): <desc> (refs #<linked issue>).
+               One commit per logical fix. Never force-push, never rebase, never merge.
+            3. For findings you are NOT confident fixing (design questions, intent
+               ambiguity), do NOT change code — list them for the human.
+            4. Post ONE summary comment via `gh pr comment`:
+               - What the PR does (1 short paragraph)
+               - Issues found, by category, and which were auto-fixed (with commit SHAs)
+               - Remaining items needing human judgment (may be "none")
+               Keep it concise — this is the human reviewer's morning digest.
+          # Scoped toolset: no WebFetch/WebSearch and no unrestricted Bash —
+          # a PR-triggered agent reads untrusted text (diffs, issue bodies), so
+          # broad shell + network access would be a prompt-injection exfil path.
+          claude_args: '--allowedTools "Task" "Read" "Edit" "Write" "Glob" "Grep" "Bash(git:*)" "Bash(gh pr view:*)" "Bash(gh pr diff:*)" "Bash(gh pr list:*)" "Bash(gh pr comment:*)" "Bash(gh issue view:*)" "Bash(gh issue search:*)" --max-turns 30 --model claude-sonnet-5'
